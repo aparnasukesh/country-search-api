@@ -60,13 +60,11 @@ func (c *restCountriesClient) GetCountryByName(ctx context.Context, name string)
 		return nil, errors.New("no countries found")
 	}
 
-	// ✅ Find exact match for requested country name
 	for _, country := range data {
 		if strings.EqualFold(country.Name.Common, name) {
 			return &country, nil
 		}
 	}
 
-	// fallback if exact match not found
 	return &data[0], nil
 }

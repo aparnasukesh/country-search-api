@@ -7,11 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CountryHandler struct {
-	service *CountryService
+type CountryServiceInterface interface {
+	GetCountry(ctx context.Context, name string) (*Country, error)
 }
 
-func NewCountryHandler(service *CountryService) *CountryHandler {
+type CountryHandler struct {
+	service CountryServiceInterface
+}
+
+func NewCountryHandler(service CountryServiceInterface) *CountryHandler {
 	return &CountryHandler{service: service}
 }
 
