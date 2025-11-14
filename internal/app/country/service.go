@@ -9,7 +9,7 @@ import (
 
 type CountryService struct {
 	cache  cache.Cache
-	client client.RestCountriesClient // ✅ correct
+	client client.RestCountriesClient
 }
 
 func NewCountryService(cache cache.Cache, client client.RestCountriesClient) *CountryService {

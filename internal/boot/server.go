@@ -11,21 +11,24 @@ import (
 
 	"github.com/aparnasukesh/country-search-api/config"
 	"github.com/aparnasukesh/country-search-api/internal/di"
+	"github.com/gin-gonic/gin"
 )
 
 func StartServer(cfg *config.Config, container *di.Container) {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/api/countries/search", container.CountryHandler.SearchCountry)
+
+	router := gin.Default()
+
+	router.GET("/api/countries/search", container.CountryHandler.SearchCountry)
 
 	server := &http.Server{
 		Addr:    cfg.ServerPort,
-		Handler: mux,
+		Handler: router,
 	}
 
 	go func() {
-		fmt.Println("✅ Server running on http://localhost" + cfg.ServerPort)
+		fmt.Println("Server running at http://localhost" + cfg.ServerPort)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Println("Server error:", err)
+			fmt.Println("Server Error:", err)
 		}
 	}()
 
@@ -33,13 +36,13 @@ func StartServer(cfg *config.Config, container *di.Container) {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	fmt.Println("\nShutting down server...")
+	fmt.Println("\n Shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {
-		fmt.Println("Shutdown error:", err)
+		fmt.Println("Shutdown Error:", err)
 	}
 
 	fmt.Println("Server stopped gracefully.")
